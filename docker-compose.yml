@@ -20,8 +20,8 @@ services:
     volumes:
       - ./n8n_data:/home/node/.n8n
     networks:
-      - laravel_appnet
+      - thq-solition_appnet
 networks:
-  laravel_appnet:
+  thq-solition_appnet:
     external: true
 
