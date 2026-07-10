@@ -1,25 +1,39 @@
 services:
   n8n:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     environment:
       - N8N_BASIC_AUTH_ACTIVE=false
       - N8N_ENCRYPTION_KEY=thq-super-secret-key-2026
-      - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=adminpassword
-      - N8N_HOST=n8n.thq-solution.io.vn
+      - N8N_HOST=n8n.thq-solution-tools.io.vn
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
-      - WEBHOOK_URL=https://n8n.thq-solution.io.vn/
-      - N8N_EDITOR_BASE_URL=https://n8n.thq-solution.io.vn
-      - NODES_EXCLUDE="[]"
+      - WEBHOOK_URL=https://n8n.thq-solution-tools.io.vn/
+      - N8N_EDITOR_BASE_URL=https://n8n.thq-solution-tools.io.vn
+      - NODES_EXCLUDE=[]
       - N8N_FILE_ACCESS_WHITELIST=/shared,/tmp
-      - N8N_RESTRICT_FILE_ACCESS_TO=/shared;/tmp;/home/node/.n8n-files
+      - N8N_RESTRICT_FILE_ACCESS_TO=/shared;/tmp;/tmp/mi_video;/home/node/.n8n-files;/home/node;/tmp/tiktok_video
       - N8N_PROXY_HOPS=1
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=48
+      - EXECUTIONS_DATA_PRUNE_MAX_COUNT=100
+      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
+      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
+      - EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=false
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
     volumes:
       - ./n8n_data:/home/node/.n8n
-    expose:
-      - "5678"
+    ports:
+      - "5678:5678"
+    networks:
+      - shared_proxy
+
+  ffmpeg:
+    image: alpine:3.22
+    container_name: n8n-ffmpeg
+    command: sh -c "apk add --no-cache ffmpeg fontconfig font-noto-cjk font-noto-emoji && fc-cache -fv && tail -f /dev/null"
     networks:
       - shared_proxy
 networks:
